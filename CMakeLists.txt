@@ -17,9 +17,21 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
         CXX_STANDARD 20
         CXX_STANDARD_REQUIRED ON
         POSITION_INDEPENDENT_CODE ON
+        LINKER_LANGUAGE CXX
 )
 
+include(ExternalProject)
+ExternalProject_Add(project_concord
+  GIT_REPOSITORY https://github.com/Cogmasters/concord
+  PREFIX ${CMAKE_CURRENT_BINARY_DIR}/concord
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND make
+  BUILD_IN_SOURCE true
+)
+ExternalProject_Get_Property(project_concord SOURCE_DIR)
+
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
+target_link_libraries(${PROJECT_NAME} ${SOURCE_DIR}/src/project_concord/lib/libdiscord.a)
 
 if(BUILD_TESTING)
     set(ENV_FILE_SOURCE ${CMAKE_SOURCE_DIR}/.env)
